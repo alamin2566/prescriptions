@@ -1,0 +1,869 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Medical Prescription System</title>
+    <script src="https://cdn.ckeditor.com/ckeditor5/41.3.1/classic/ckeditor.js"></script>
+    
+    <style>
+        /* Reset and Base Styles */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            background-color: #f5f5f5;
+        }
+
+        /* Menu Styles */
+        .menu-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2px;
+            background: rgb(191 219 255);
+            padding: 5px;
+            border: 1px solid #9daec5;
+            color: #2d4f7b;
+            
+        }
+        
+        .menu-item {
+            padding: 5px 10px;
+            cursor: pointer;
+            position: relative;
+        }
+        
+        .menu-item::first-letter {
+            text-decoration: underline;
+        }
+        
+        .menu-item:hover, .menu-item.active {
+            background: white;
+            border-radius: 15px 15px 0 0;
+        }
+        
+        .active {
+            padding: 8px 10px;
+        }
+
+        /* Patient Info Section */
+        .patient-info-container {
+            display: flex;
+            gap: 20px;
+            background: rgb(199 218 240);
+            padding: 10px;
+           
+        }
+        
+        .patient-info-column {
+            flex: 1;
+        }
+        
+        .action-buttons {
+            display: flex;
+            
+            justify-content: center;
+            width: 350px;
+            background: rgb(206 222 237);
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px gray;
+            padding: 10px;
+        }
+        
+        .action-button {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            cursor: pointer;
+            text-align: center;
+            padding: 5px;
+        }
+
+        /* Main Content Layout */
+        .main-content-container {
+            display: flex;
+            width: 100%;
+           
+        }
+        
+        /* Examination Column (30%) */
+        .examination-column {
+            width: 30%;
+            background: rgb(184, 207, 227);
+            padding: 15px;
+        }
+        
+        /* Editor Column (40%) */
+        .editor-column {
+            width: 40%;
+            background: rgb(216, 228, 242);
+            padding: 15px;
+        }
+        
+        /* Right Sidebar (30%) */
+        .right-sidebar {
+            width: 30%;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            background: #d8e4f2;
+        }
+
+        /* Editor Styles */
+        .editor-container {
+            width: 100%;
+        }
+        
+        .ck-editor__editable {
+            height: 450px;
+            margin: 0 auto;
+            box-shadow: 0px 5px 5px gray;
+            margin-top: 8px;
+        }
+        
+        #editor {
+            border: 1px solid #c0b8a8;
+            min-height: 500px;
+            padding: 20px;
+            background: #000000;
+            font-family: 'Palatino Linotype', serif;
+        }
+
+        /* Form Elements */
+        input[type="text"],
+        input[type="date"],
+        textarea,
+        select {
+            border: 1px solid #ccc;
+            padding: 8px 12px;
+            border-radius: 4px;
+            font-size: 14px;
+            width: 100%;
+            margin-bottom: 10px;
+        }
+        
+        /* Search Container */
+        .search-container {
+            background-color: rgb(223, 223, 223);
+            text-align: center;
+            border: 1px solid #ddd;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            padding: 10px;
+        }
+        
+        .search-title {
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: #333;
+            font-size: 16px;
+            text-align: center;
+            padding: 5px;
+        }
+        
+        .search-box {
+            position: relative;
+            width: 100%;
+        }
+        
+        .search-input {
+            width: 100%;
+            padding: 8px 10px 8px 30px;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+            font-size: 14px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1) inset;
+            outline: none;
+        }
+        
+        .search-icon {
+            position: absolute;
+            left: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #666;
+            font-size: 14px;
+        }
+
+        /* Filter Container */
+        .filter-container {
+            border: 1px solid #ddd;
+            box-shadow: 0 1px 1px rgba(0,0,0,0.1);
+            padding: 10px;
+        }
+        
+        .filter-title {
+            font-weight: bold;
+            color: #ffffff;
+            font-size: 16px;
+            text-align: center;
+            margin-bottom: 10px;
+            padding: 5px 0;
+            background: rgb(123, 161, 198);
+        }
+        
+        .filter-row {
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        
+        .filter-label {
+            width: 70px;
+            text-align: left;
+            font-size: 14px;
+            color: rgb(20, 68, 111);
+            font-weight: bold;
+        }
+        
+        .filter-input {
+            flex: 1;
+            padding: 8px 12px;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+            font-size: 14px;
+            outline: none;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.1) inset;
+        }
+
+        /* Notice Boxes */
+        .notice-box {
+            color: white;
+            text-align: center;
+            padding: 10px;
+        }
+        
+        .green-notice {
+            background: rgb(113, 212, 115);
+        }
+        
+        .purple-notice {
+            background: rgb(128, 95, 210);
+        }
+
+        /* Tabs */
+        .tab {
+            padding: 8px 15px;
+            background: white;
+            border-top-right-radius: 30px;
+            cursor: pointer;
+            box-shadow: 2px 0 3px rgba(0,0,0,0.1);
+            border: 1px solid #ddd;
+            border-bottom: none;
+            text-align: center;
+        }
+        
+        .tab.active {
+            background: #ffeb3b !important;
+        }
+
+        /* Utility Classes */
+        .mb-10 { margin-bottom: 10px; }
+        .mt-10 { margin-top: 10px; }
+        .text-center { text-align: center; }
+        .flex { display: flex; }
+        .items-center { align-items: center; }
+        .gap-10 { gap: 10px; }
+        .gap-20 { gap: 20px; }
+
+        .upload-container {
+                    margin-top: 10px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    max-width: 600px;
+    border: 1px dashed #aaa;
+    border-radius: 5px;
+    padding: 12px 15px;
+    transition: all 0.3s ease;
+    font-family: Arial, sans-serif;
+}
+        
+        
+        .upload-container:hover {
+            border-color: #4a90e2;
+            background-color: #f0f7ff;
+        }
+        
+        .upload-container.dragover {
+            border-color: #4a90e2;
+            background-color: #e6f0ff;
+        }
+        
+        .upload-btn {
+            background-color: #4a90e2;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            border: none;
+            font-size: 14px;
+            white-space: nowrap;
+        }
+        
+        .upload-btn:hover {
+            background-color: #3a7bc8;
+        }
+        
+        #file-input {
+            display: none;
+        }
+        
+        .upload-text {
+            color: #555;
+            font-size: 14px;
+            white-space: nowrap;
+        }
+        
+        .file-info {
+            margin-left: auto;
+            font-size: 13px;
+            color: #666;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 200px;
+        }
+    </style>
+</head>
+<body>
+    <form action="{% url 'prescription' %}" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+      
+        <!-- Menu Container -->
+        <div class="menu-container">
+            <div class="menu-item active"><a href="{% url 'prescription' %}" style="text-decoration: none; color: inherit;">Prescription</a></div>
+            <div class="menu-item"><a href="{% url 'prescription_list' %}" style="text-decoration: none; color: inherit;">View All Prescription</a></div>
+            <div class="menu-item">Drug Database</div>
+            <div class="menu-item">Template</div>
+            <div class="menu-item">Appointment</div>
+            <div class="menu-item">Payment</div>
+            <div class="menu-item"><a href="{% url 'header_edit' %}" style="text-decoration: none; color: inherit;">Header Edit</a></div>
+            <div class="menu-item">Page Setup</div>
+            <div class="menu-item">SMS</div>
+            <div class="menu-item">Buy Credit</div>
+            <div class="menu-item">Use Offline</div>
+        </div>
+     <!-- Patient Info Section -->
+  <div class="patient-info-container">
+    <div class="patient-info-column">
+      <div class="flex items-center gap-10 mb-10">
+        <div class="flex items-center">
+          <span style="margin-right: 5px;">Name:</span>
+          <input type="text" name="name" style="width: 120px;" required>
+        </div>
+        <div class="flex items-center">
+          <span style="margin-right: 5px;">Age:</span>
+          <input type="text" name="age" style="width: 30px;" required>
+        </div>
+        <div class="flex items-center">
+          <span style="margin-right: 5px;">Sex:</span>
+          <input type="text" name="sex" style="width: 30px;" required>
+        </div>
+        <div class="flex items-center">
+          <span style="margin-right: 5px;">Address:</span>
+          <input type="text" name="address" style="width: 180px;" required>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-10">
+        <div class="flex items-center">
+          <span style="margin-right: 5px;">Mobile:</span>
+          <input type="text" name="mobile" style="width: 100px;" required>
+        </div>
+        <div class="flex items-center">
+          <span style="margin-right: 5px;">Reg No:</span>
+          <input type="text" name="reg_no" style="width: 60px;" required>
+        </div>
+        <div class="flex items-center" style="position: relative; width: 200px;">
+          <span class="search-icon">🔍</span>
+          <input type="text" name="appointment" placeholder="Appointment" class="search-input">
+        </div>
+        <div class="flex items-center">
+          <span style="margin-right: 5px;">Date:</span>
+          <input type="date" name="date" required>
+        </div>
+      </div>
+    </div>
+     
+
+ <!-- Action Buttons -->
+ <div class="action-buttons">
+    <button type="submit" name="action" value="preview" class="action-button">
+      <div style="font-size: 20px; margin-bottom: 5px;">🔍</div>
+      <div style="font-size: 12px;">Preview</div>
+    </button>
+    <button type="submit" name="action" value="print" class="action-button">
+      <div style="font-size: 20px; margin-bottom: 5px;">🖨️</div>
+      <div style="font-size: 12px;">Save & Print</div>
+    </button>
+    <button type="submit" name="action" value="print_no_header" class="action-button">
+      <div style="font-size: 20px; margin-bottom: 5px;">📄</div>
+      <div style="font-size: 12px;">Save & Print<br>Without Header</div>
+    </button>
+    <button type="submit" name="action" value="save" class="action-button">
+      <div style="font-size: 20px; margin-bottom: 5px;">💾</div>
+      <div style="font-size: 12px;">Save Only</div>
+    </button>
+  </div>
+</div>
+
+    <!-- Main Content Container -->
+    <div class="main-content-container">
+        <!-- Examination Column (30%) -->
+        <div class="examination-column">
+            <div class="mb-10">
+                <div class="mb-10">Disease/Condition/Dx</div>
+                <input type="text" name="disease_condition_dx">
+            </div>
+            
+            <div class="mb-10">
+                <div class="mb-10">C/C</div>
+                <textarea name="c_c" style="min-height: 100px;resize: none;" ></textarea>
+            </div>
+            
+            <div style="width: 100%;">
+                <div style="display: flex;">
+                    <div class="tab" style="width: 80px; height: 40px;margin-right: 2px;">O/E</div>
+                    <div class="tab active" style="width: 100px; height: 40px;margin-right: 2px;">O/E (Box)</div>
+                    <div class="tab" style="width: 110px; height: 40px;margin-right: 2px;">Box → O/E</div>
+                    <div class="tab" style="width: 30px; height: 40px;margin-right: 2px;">[-]</div>
+                </div>
+              
+                <div style="padding: 15px; border-radius: 0 8px 8px 8px;">
+                    <div class="flex items-center mb-10">
+                        <span style="width: 80px;">BP:</span>
+                        <input type="text" name="blood_pressure" style="flex: 1;">
+                    </div>
+                    <div class="flex items-center mb-10">
+                        <span style="width: 80px;">Pulse:</span>
+                        <input type="text" name="pulse" style="flex: 1;">
+                    </div>
+                    <div class="flex items-center mb-10">
+                        <span style="width: 80px;">Temp:</span>
+                        <input type="text" name="temperature" style="flex: 1;">
+                    </div>
+                    <div class="flex items-center mb-10">
+                        <span style="width: 80px;">Heart:</span>
+                        <input type="text" name="heart_exam" style="flex: 1;">
+                    </div>
+                    <div class="flex items-center mb-10">
+                        <span style="width: 80px;">Lungs:</span>
+                        <input type="text" name="lungs_exam" style="flex: 1;">
+                    </div>
+                    <div class="flex items-center mb-10">
+                        <span style="width: 80px;">Abd:</span>
+                        <input type="text" name="abdomen_exam" style="flex: 1;">
+                    </div>
+                    <div class="flex items-center mb-10">
+                        <span style="width: 80px;">Anaemia:</span>
+                        <input type="text" name="anaemia" style="flex: 1;">
+                    </div>
+                    <div class="flex items-center mb-10">
+                        <span style="width: 80px;">Jaundice:</span>
+                        <input type="text" name="jaundice" style="flex: 1;">
+                    </div>
+                    <div class="flex items-center mb-10">
+                        <span style="width: 80px;">Cyanosis:</span>
+                        <input type="text" name="cyanosis" style="flex: 1;">
+                    </div>
+                    <div class="flex items-center">
+                        <span style="width: 80px;">Oedema:</span>
+                        <input type="text" name="oedema" style="flex: 1;">
+                    </div>
+                </div>
+            </div>
+            
+            <div class="mb-10">
+                <div class="mb-10">Ix</div>
+                <textarea name="ix" style="min-height: 100px;resize: none;"></textarea>
+            </div>
+            
+            <div class="mb-10">
+                <div class="mb-10">Drug History</div>
+                <div class="flex gap-10">
+                    <textarea name="drug_history" style="flex: 1; min-height: 60px;resize: none;"></textarea>
+                    <div class="flex items-center" style="position: relative; width: 200px;">
+                        <span class="search-icon">🔍</span>
+                        <input type="text" placeholder="Type" class="search-input">
+                    </div>
+                </div>
+            </div>
+            
+            <div class="mt-10">
+                <div class="flex gap-5">
+                    <div class="tab active" style="padding: 8px 15px; border-top-left-radius: 15px; border-top-right-radius: 15px;">BMI</div>
+                    <div class="tab" style="padding: 8px 15px; border-top-left-radius: 15px; border-top-right-radius: 15px;">Insulin</div>
+                    <div class="tab" style="padding: 8px 15px; border-top-left-radius: 15px; border-top-right-radius: 15px;">Z-Score</div>
+                    <div class="tab" style="padding: 8px 15px; border-top-left-radius: 15px; border-top-right-radius: 15px;">BMR</div>
+                    <div class="tab" style="padding: 8px 15px; border-top-left-radius: 15px; border-top-right-radius: 15px;">EDD</div>
+                </div>
+              
+                <div style="padding: 15px; border-radius: 0 8px 8px 8px;">
+                    <div class="flex gap-15">
+                        <div>
+                            <div class="text-center mb-10">Weight <br>(Kg)</div>
+                            <input type="text" style="width: 80px; text-align: center;">
+                        </div>
+                        <div>
+                            <div class="text-center mb-10">Height <br>(feet)</div>
+                            <input type="text" style="width: 80px; text-align: center;">
+                        </div>
+                        <div>
+                            <div class="text-center mb-10">Height <br>(Inch)</div>
+                            <input type="text" style="width: 80px; text-align: center;">
+                        </div>
+                        <div>
+                            <div class="text-center mb-10">BMI<br>=</div>
+                            <input type="text" style="width: 80px; text-align: center;">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="flex gap-20 mt-10">
+                <div>
+                    <div class="mb-10">Class</div>
+                    <input type="text" style="width: 120px;">
+                </div>
+                <div>
+                    <div class="mb-10">Ideal Weight</div>
+                    <input type="text" style="width: 120px;">
+                </div>
+            </div>
+            
+            <div class="mt-10">
+                <div class="flex justify-center gap-5">
+                    <div class="tab active" style="padding: 8px 15px; border-top-left-radius: 15px; border-top-right-radius: 15px;">Past History</div>
+                    <div class="tab" style="padding: 8px 15px; border-top-left-radius: 15px; border-top-right-radius: 15px;">Present History</div>
+                    <div class="tab" style="padding: 8px 15px; border-top-left-radius: 15px; border-top-right-radius: 15px;">Notes</div>
+                </div>
+              
+                <div style="margin: 0 auto; max-width: 600px;">
+                    <div style="padding: 15px; border-radius: 0 8px 8px 8px; border-top: none;">
+                        <textarea style="width: 100%; min-height: 70px;resize: none;">Past Medical History</textarea>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="flex items-center gap-10 mt-10">
+                <span style="font-weight: bold;">PRINT:</span>
+                <label class="flex items-center gap-5">
+                    <input type="checkbox"> Past H/O
+                </label>
+                <label class="flex items-center gap-5">
+                    <input type="checkbox"> Present H/O
+                </label>
+                <label class="flex items-center gap-5">
+                    <input type="checkbox"> Notes
+                </label>
+                <label class="flex items-center gap-5">
+                    <input type="checkbox"> EDD
+                </label>
+            </div>
+        </div>
+        
+        <!-- Editor Column (40%) -->
+        <div class="editor-column">
+            <!-- Drug Entry Form -->
+            <div style="border: 1px solid #ddd; padding: 10px; margin-bottom: 20px; background: linear-gradient(to bottom, #e3f0ff, #b8cfe3);">
+                <div class="flex items-center gap-20" style="flex-wrap: wrap;">
+                    <div style="flex: 1; min-width: 150px;">
+                        <div class="mb-10">Type Brand Name</div>
+                        <input type="text">
+                    </div>
+                    <div style="flex: 1; min-width: 120px;">
+                        <div class="mb-10">Type Dose</div>
+                        <input type="text">
+                    </div>
+                    <div style="flex: 1; min-width: 120px;">
+                        <div class="mb-10">Duration</div>
+                        <input type="text">
+                    </div>
+                    <div class="flex items-center" style="min-width: 80px; margin-right: 10px;">
+                        <label class="flex items-center gap-5">
+                            <input type="checkbox"> D
+                        </label>
+                        <label class="flex items-center gap-5">
+                            <input type="checkbox"> M
+                        </label>
+                    </div>
+                    <div class="flex items-center" style="min-width: 180px; margin-right: 10px;">
+                        <label class="flex items-center gap-5">
+                            <input type="checkbox"> খাবার আগে
+                        </label>
+                        <label class="flex items-center gap-5">
+                            <input type="checkbox"> খাবার পরে
+                        </label>
+                    </div>
+                    <button style="margin-left: auto;HEIGHT: 40PX;WIDTH: 80PX;background: #4981b7;border: none;border-radius: 18px;color: white;cursor: pointer;">ADD</button>
+                </div>
+            </div>
+            
+            <!-- CKEditor Container -->
+            <div class="editor-container">
+                <textarea name="prescription_content" id="editor"></textarea>
+            </div>
+            
+            <!-- Follow-up and Payment Info -->
+            <div style="margin-top: 20px;">
+                <div class="flex items-center gap-10">
+                    <input type="text" style="width: 50px;">
+                    <label class="flex items-center gap-5">
+                        <input type="checkbox"> দিন
+                    </label>
+                    <label class="flex items-center gap-5">
+                        <input type="checkbox"> মাস ..................... পরে আসবেন
+                    </label>
+                </div>
+                
+                <div class="flex items-center gap-20 mt-10">
+                    <div>
+                        <label style="font-weight: bold;">Paid (TK)</label><br>
+                        <input type="text" style="width: 60px;">
+                    </div>
+                    <div>
+                        <label style="font-weight: bold;">Visit No</label><br>
+                        <input type="text" style="width: 60px;">
+                    </div>
+                    <div class="flex items-center gap-5">
+                        <label style="font-weight: bold;">Last Visit</label>
+                        <input type="text" style="width: 40px;">
+                        <span>days ago</span>
+                    </div>
+                </div>
+                <div class="upload-container" id="dropArea">
+                    <label for="file-input" class="upload-btn">Upload File</label>
+                    <input type="file" id="file-input">
+                    <div class="upload-text">Drag & Drop Upload</div>
+                    <div class="file-info" id="fileInfo"></div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Right Sidebar (30%) -->
+        <div class="right-sidebar">
+            <!-- Green Notice Box -->
+            <div class="notice-box green-notice">
+                জিলসফট ৭.০ ডুয়েল UI টেস্ট করুন।<br>
+                ক্লিক করুন এখানে।<br>
+                অর্ডার করতে- 01617-18-0711
+            </div>
+            
+            <!-- Search Templates -->
+           
+
+            {% load static %}
+
+            <!-- GET Drug Template -->
+            <div class="search-container">
+                <div class="search-title">GET Drug Template</div>
+                <div class="search-box">
+                    <span class="search-icon">🔍</span>
+                    <input type="text" class="search-input" data-type="drug" placeholder="Type drug name...">
+                </div>
+                <div class="search-results"></div>
+            </div>
+            
+            <!-- GET Advice Template -->
+            <div class="search-container">
+                <div class="search-title">GET Advice Template</div>
+                <div class="search-box">
+                    <span class="search-icon">🔍</span>
+                    <input type="text" class="search-input" data-type="advice" placeholder="Type advice...">
+                </div>
+                <div class="search-results"></div>
+            </div>
+            
+            <!-- GET Treatment Template -->
+            <div class="search-container">
+                <div class="search-title">GET Treatment Template</div>
+                <div class="search-box">
+                    <span class="search-icon">🔍</span>
+                    <input type="text" class="search-input" data-type="treatment" placeholder="Type treatment...">
+                </div>
+                <div class="search-results"></div>
+            </div>
+            
+            <!-- GET C/C Template -->
+            <div class="search-container">
+                <div class="search-title">GET C/C Template</div>
+                <div class="search-box">
+                    <span class="search-icon">🔍</span>
+                    <input type="text" class="search-input" data-type="cc" placeholder="Type CC...">
+                </div>
+                <div class="search-results"></div>
+            </div>
+            
+            <!-- GET O/E Template -->
+            <div class="search-container">
+                <div class="search-title">GET O/E Template</div>
+                <div class="search-box">
+                    <span class="search-icon">🔍</span>
+                    <input type="text" class="search-input" data-type="oe" placeholder="Type OE...">
+                </div>
+                <div class="search-results"></div>
+            </div>
+            
+            <!-- GET I/X Template -->
+            <div class="search-container">
+                <div class="search-title">GET I/X Template</div>
+                <div class="search-box">
+                    <span class="search-icon">🔍</span>
+                    <input type="text" class="search-input" data-type="ix" placeholder="Type IX...">
+                </div>
+                <div class="search-results"></div>
+            </div>
+            
+            <!-- Load JavaScript -->
+          
+    
+            
+            <!-- Purple Notice Box -->
+            <div class="notice-box purple-notice">
+                আমাদের ফেসবুক গ্রুপে জয়েন <br> করুন
+            </div>
+            
+            <!-- Filter Box -->
+            <div class="filter-container">
+                <div class="filter-title">Filter</div>
+                <div class="filter-row">
+                    <div class="filter-label">Company:</div>
+                    <input type="text" class="filter-input" placeholder="Search company...">
+                </div>
+                <div class="filter-row">
+                    <div class="filter-label">Generic:</div>
+                    <input type="text" class="filter-input" placeholder="Search generic...">
+                </div>
+                <div class="filter-row">
+                    <div class="filter-label">Brand:</div>
+                    <div class="filter-value"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    </form>
+    <!-- JavaScript -->
+    <script>
+        // Menu Item Click Handler
+        document.querySelectorAll('.menu-item').forEach(item => {
+            item.addEventListener('click', function() {
+                document.querySelectorAll('.menu-item').forEach(i => {
+                    i.classList.remove('active');
+                    i.style.padding = '5px 10px';
+                });
+                this.classList.add('active');
+                this.style.padding = '8px 10px';
+            });
+        });
+
+        // Tab Switching
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.addEventListener('click', function() {
+                // Remove active class from all tabs in the same container
+                this.parentElement.querySelectorAll('.tab').forEach(t => {
+                    t.classList.remove('active');
+                });
+                this.classList.add('active');
+            });
+        });
+
+        // CKEditor Initialization
+        ClassicEditor
+            .create(document.querySelector('#editor'), {
+                toolbar: {
+                    items: [
+                        'heading', '|',
+                        'fontSize', 'fontFamily', '|',
+                        'bold', 'italic', 'underline', 'strikethrough', '|',
+                        'alignment', '|',
+                        'bulletedList', 'numberedList', '|',
+                        'link', 'uploadImage', 'blockQuote', '|',
+                        'undo', 'redo'
+                    ]
+                },
+                fontSize: {
+                    options: [10, 12, 14, 'default', 18, 20, 24],
+                    supportAllValues: true
+                },
+                fontFamily: {
+                    options: [
+                        'default',
+                        'Arial, Helvetica, sans-serif',
+                        'Courier New, Courier, monospace',
+                        'Georgia, serif',
+                        'Lucida Sans Unicode, Lucida Grande, sans-serif',
+                        'Tahoma, Geneva, sans-serif',
+                        'Times New Roman, Times, serif',
+                        'Trebuchet MS, Helvetica, sans-serif',
+                        'Verdana, Geneva, sans-serif',
+                        'Palatino Linotype, Book Antiqua, Palatino, serif'
+                    ]
+                },
+                image: {
+                    toolbar: [
+                        'imageTextAlternative',
+                        'toggleImageCaption',
+                        'imageStyle:inline',
+                        'imageStyle:block',
+                        'imageStyle:side',
+                        'linkImage'
+                    ]
+                }
+            })
+            .then(editor => {
+                window.editor = editor;
+            })
+            .catch(error => {
+                console.error(error);
+            });
+
+            const dropArea = document.getElementById('dropArea');
+        const fileInput = document.getElementById('file-input');
+        const fileInfo = document.getElementById('fileInfo');
+
+        // Handle drag over
+        dropArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropArea.classList.add('dragover');
+        });
+
+        // Handle drag leave
+        dropArea.addEventListener('dragleave', () => {
+            dropArea.classList.remove('dragover');
+        });
+
+        // Handle drop
+        dropArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropArea.classList.remove('dragover');
+            
+            if (e.dataTransfer.files.length) {
+                fileInput.files = e.dataTransfer.files;
+                updateFileInfo();
+            }
+        });
+
+        // Handle click/selection
+        fileInput.addEventListener('change', updateFileInfo);
+
+        function updateFileInfo() {
+            if (fileInput.files.length > 0) {
+                const file = fileInput.files[0];
+                fileInfo.textContent = file.name;
+            } else {
+                fileInfo.textContent = 'No file selected';
+            }
+        }
+    </script>
+    <script src="{% static 'js/search.js' %}"></script>
+
+</body>
+</html>

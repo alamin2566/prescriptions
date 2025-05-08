@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Header Edit</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #e0ecff;
+            padding: 30px;
+        }
+        .header-box {
+            background-color: {{ header.background_color }};
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 8px #999;
+            margin-bottom: 30px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            font-weight: bold;
+        }
+        input[type="text"], textarea {
+            width: 100%;
+            padding: 8px;
+            font-size: 14px;
+        }
+        .radio-group {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+        .save-btn {
+            padding: 10px 20px;
+            background: #0066cc;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <h2>Header & Footer Settings</h2>
+
+    <div class="header-box">
+        <h3>ডাঃ আরিফ জামান</h3>
+        <p>এমবিবিএস<br>জেনারেল ফিজিশিয়ান<br>বিএমডিসি রেজিঃ নং-এ ১৩৭৬৯৬</p>
+        <p style="text-align: right;">
+            Dr. Arif Jaman<br>
+            MBBS<br>
+            General Physician<br>
+            BMDC Reg No: A-137696
+        </p>
+        {% if header.show_barcode %}
+        <img src="https://www.barcodesinc.com/generator/image.php?code=A137696&style=197&type=C128B&width=200&height=60&xres=1&font=3" alt="Barcode">
+        {% endif %}
+    </div>
+
+    <form method="POST">
+        {% csrf_token %}
+        <div class="form-group">
+            <label>Select Background Color:</label><br>
+            <input type="text" name="bg_color" value="{{ header.background_color }}" placeholder="e.g. FFFFFF">
+        </div>
+        <div class="form-group">
+            <label>Footer Text:</label>
+            <textarea name="footer_text">{{ header.footer_text }}</textarea>
+        </div>
+        <div class="form-group radio-group">
+            <label>Display Barcode:</label>
+            <label><input type="radio" name="barcode" value="yes" {% if header.show_barcode %}checked{% endif %}> Yes</label>
+            <label><input type="radio" name="barcode" value="no" {% if not header.show_barcode %}checked{% endif %}> No</label>
+        </div>
+        <button class="save-btn" type="submit">SAVE</button>
+    </form>
+</body>
+</html>

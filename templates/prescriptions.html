@@ -1,0 +1,22 @@
+<form method="POST">
+    {% csrf_token %}
+    
+    <!-- Patient Info -->
+    <label for="name">Name:</label><input type="text" name="name" required><br>
+    <label for="age">Age:</label><input type="text" name="age" required><br>
+    <label for="sex">Sex:</label><input type="text" name="sex" required><br>
+    <label for="address">Address:</label><input type="text" name="address" required><br>
+    <label for="mobile">Mobile:</label><input type="text" name="mobile" required><br>
+    <label for="reg_no">Reg No:</label><input type="text" name="reg_no" required><br>
+    <label for="appointment">Appointment:</label><input type="text" name="appointment" required><br>
+    <label for="date">Date:</label><input type="date" name="date" required><br>
+
+    <!-- Medical Info -->
+    <label for="disease">Disease/Condition:</label><input type="text" name="disease" required><br>
+    <label for="cc">C/C:</label><textarea name="cc" required></textarea><br>
+    <label for="oe">O/E:</label><textarea name="oe" required></textarea><br>
+    <label for="ix">Ix:</label><textarea name="ix" required></textarea><br>
+    <label for="drug_history">Drug History:</label><textarea name="drug_history" required></textarea><br>
+
+    <button type="submit">Save & Print</button>
+</form>

@@ -1,0 +1,6 @@
+<h2>All Prescriptions</h2>
+<ul>
+    {% for pres in prescriptions %}
+        <li>{{ pres.patient_name }} - <a href="{% url 'prescription_receipt' pres.pk %}">View Receipt</a></li>
+    {% endfor %}
+</ul>

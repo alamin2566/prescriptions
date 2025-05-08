@@ -1,0 +1,168 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Medical Prescription</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+             /* Body border */
+        }
+        .clinic-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+        }
+        .clinic-info {
+            text-align: left;
+        }
+        .clinic-info.bangla {
+            font-family: 'SolaimanLipi', 'Bangla', sans-serif;
+            direction: rtl;
+            unicode-bidi: bidi-override;
+        }
+        .doctor-name {
+            font-size: 18px;
+            font-weight: bold;
+        }
+        .patient-info {
+            border-top: 1px solid #000;
+            border-bottom: 1px solid #000;
+            padding: 10px 0;
+            
+            position: relative;
+        }
+        .patient-info:after {
+            content: "";
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            width: 100%;
+            border-bottom: 1px solid #000;  /* Bottom border for patient info */
+        }
+        .patient-info table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .patient-info td {
+            padding: 2px 5px;
+        }
+        .prescription-container {
+            display: flex;
+            /* Border above the two columns */
+        }
+        .left-column {
+            width: 30%;
+            padding-right: 15px;
+            border-right: 1px solid #000;  /* Vertical border between columns */
+        }
+        .right-column {
+            width: 70%;
+            padding-left: 15px;
+        }
+        .section-title {
+            font-weight: bold;
+            margin-bottom: 10p;
+        }
+        .medicine {
+            margin-bottom: 15px;
+        }
+        .medicine-name {
+            font-weight: bold;
+        }
+        .signature {
+            margin-top: 50px;
+            text-align: right;
+        }
+        .dashed-line {
+            border-top: 1px dashed #000;
+            margin: 15px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="clinic-header">
+        <div class="clinic-info bangla">
+            <div class="doctor-name">ডাঃ {{ doctor.bangla_name|safe }}</div>
+            <div>{{ doctor.bangla_qualification|safe }}</div>
+            <div>{{ doctor.bangla_specialization|safe }}</div>
+            <div>বিএমডিসি রেজিঃ নং {{ doctor.bmdc_reg_no|safe }}</div>
+        </div>
+        <div class="clinic-info">
+            <div class="doctor-name">Dr. {{ doctor.english_name|safe }}</div>
+            <div>{{ doctor.english_qualification|safe }}</div>
+            <div>{{ doctor.english_specialization|safe }}</div>
+            <div>BMDC Reg No: {{ doctor.bmdc_reg_no|safe }}</div>
+        </div>
+    </div>
+
+    <div class="patient-info">
+        <table>
+            <tr>
+                <td><strong>Name</strong>: {{ prescription.name|safe }}</td>
+                <td><strong>Age</strong>: {{ prescription.age|safe }}</td>
+                <td><strong>Sex</strong>: {{ prescription.gender|safe }}</td>
+                <td><strong>Date</strong>: {{ prescription.date|date:"d/m/Y"|safe }}</td>
+            </tr>
+            <tr>
+                <td><strong>Address</strong>: {{ prescription.address|safe }}</td>
+                <td><strong>Reg. No</strong>: {{ prescription.reg_no|safe }}</td>
+                <td><strong>Wt.</strong>: {{ prescription.weight|safe }}</td>
+                <td><strong>Mobile</strong>: {{ prescription.mobile|safe }}</td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="prescription-container">
+        <div class="left-column">
+            <div class="section-title"><u>C/C</u></div>
+          
+            {% if prescription.cc %}
+            <p>{{ prescription.cc|safe }}</p>
+            {% endif %}
+            
+            <div class="section-title"><u>O/E</u></div>
+           
+            <div class="examination-results">
+
+                {% if prescription.blood_pressure %}<p><strong>BP:</strong> {{ prescription.blood_pressure|safe }}</p>{% endif %}
+                {% if prescription.pulse %}<p><strong>Pulse:</strong> {{ prescription.pulse|safe }}</p>{% endif %}
+                {% if prescription.temperature %}<p><strong>Temp:</strong> {{ prescription.temperature|safe }}</p>{% endif %}
+                {% if prescription.heart %}<p><strong>Heart:</strong> {{ prescription.heart|safe }}</p>{% endif %}
+                {% if prescription.lungs %}<p><strong>Lungs:</strong> {{ prescription.lungs|safe }}</p>{% endif %}
+                {% if prescription.abdomen %}<p><strong>Abd:</strong> {{ prescription.abdomen|safe }}</p>{% endif %}
+                {% if prescription.anaemia %}<p><strong>Anaemia:</strong> {{ prescription.anaemia|safe }}</p>{% endif %}
+                {% if prescription.jaundice %}<p><strong>Jaundice:</strong> {{ prescription.jaundice|safe }}</p>{% endif %}
+                {% if prescription.cyanosis %}<p><strong>Cyanosis:</strong> {{ prescription.cyanosis|safe }}</p>{% endif %}
+                {% if prescription.oedema %}<p><strong>Oedema:</strong> {{ prescription.oedema|safe }}</p>{% endif %}
+            </div>
+            
+            <div class="section-title"><u>Advice</u></div>
+           
+            {% if prescription.advice %}
+            <p>{{ prescription.advice|safe }}</p>
+            {% endif %}
+            
+            <!-- <div class="dashed-line"></div> -->
+            
+            <!-- <div><strong>Visit No:</strong> {{ prescription.visit_no|safe }}</div> -->
+        </div>
+        
+        <div class="right-column">
+            <div class="section-title"><h1>Rx.</h1></div>
+            <div class="medicine-text">
+               <code> {{ prescription.medicines|safe}}</code>
+            </div>
+        </div>
+    </div>
+
+    <!-- <div class="signature">
+        <p>_________________________</p>
+        <p>Dr. {{ doctor.english_name|safe }}</p>
+    </div> -->
+</body>
+</html>
